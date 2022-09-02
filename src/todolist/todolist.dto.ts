@@ -1,4 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
+import { IsUUID } from '@nestjs/class-validator';
 
 export class AddListDto {
     @IsNotEmpty()
@@ -6,6 +7,6 @@ export class AddListDto {
 }
 
 export class DeleteListDto {
-    @IsNotEmpty()
+    @IsUUID()
     id: string;
 }

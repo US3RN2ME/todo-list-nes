@@ -1,13 +1,12 @@
 import { IsNotEmpty } from 'class-validator';
+import { IsUUID } from '@nestjs/class-validator';
 
 export class TodoIdDto {
-    @IsNotEmpty()
+    @IsUUID()
     id: string;
 }
 
-export class AddTodoDto {
-    @IsNotEmpty()
-    listId: string;
+export class AddTodoDto extends TodoIdDto {
     @IsNotEmpty()
     name: string;
 }

@@ -8,7 +8,7 @@ import {
     Delete,
 } from '@nestjs/common';
 import { TodolistService } from './todolist.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import { AddListDto, DeleteListDto } from './todolist.dto';
 
 @Controller('lists')
@@ -17,14 +17,14 @@ export class TodolistController {
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getLists(@Req() req) {
-        return this.todolistService.getByUserId(req.user);
+    async getLists(@Req() { user }) {
+        return this.todolistService.getByUserId(user);
     }
 
     @UseGuards(JwtAuthGuard)
     @Post()
-    async addList(@Body() dto: AddListDto, @Req() req) {
-        return await this.todolistService.addTodoList(req.user, dto.name);
+    async addList(@Body() dto: AddListDto, @Req() { user }) {
+        return await this.todolistService.addTodoList(user, dto.name);
     }
 
     @UseGuards(JwtAuthGuard)
