@@ -1,54 +1,39 @@
 import { TodoService } from './todo.serivce';
+import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
 import {
     Body,
     Controller,
     Delete,
-    Get,
-    Post,
+    Param,
+    Patch,
     Put,
-    Req,
     UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
-import { AddTodoDto, TodoIdDto } from './todo.dto';
+import { UpdateTodoDto, TodoDto, TodoIdDto } from './todo.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('todos')
+@UseGuards(JwtAuthGuard)
 @Controller('todos')
 export class TodoController {
     constructor(private readonly todoService: TodoService) {}
 
-    @UseGuards(JwtAuthGuard)
-    @Get('all')
-    async getAllTodos(@Req() { user }) {
-        return await this.todoService.getTodosByUserId(user);
+    @Put(':id')
+    async updateTodo(
+        @Param() { id }: TodoIdDto,
+        @Body() { name }: UpdateTodoDto
+    ): Promise<TodoDto> {
+        return await this.todoService.updateTodo(id, name);
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Get()
-    async getTodos(@Body() dto: TodoIdDto) {
-        return await this.todoService.getTodosByListId(dto.id);
+    @Patch(':id')
+    async completeTodo(@Param() { id }: TodoIdDto): Promise<TodoDto> {
+        return await this.todoService.completeTodo(id);
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Post()
-    async addTodo(@Body() dto: AddTodoDto) {
-        return await this.todoService.addTodo(dto.id, dto.name);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Put()
-    async updateTodo(@Body() dto: AddTodoDto) {
-        return await this.todoService.updateTodo(dto.id, dto.name);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Put('complete')
-    async completeTodo(@Body() dto: TodoIdDto) {
-        return await this.todoService.completeTodo(dto.id);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Delete()
-    async deleteTodo(@Body() dto: TodoIdDto) {
-        return await this.todoService.deleteTodo(dto.id);
+    @Delete(':id')
+    async deleteTodo(@Param() { id }: TodoIdDto): Promise<TodoDto> {
+        return await this.todoService.deleteTodo(id);
     }
 }

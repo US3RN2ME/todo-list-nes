@@ -4,9 +4,10 @@ import { TodolistService } from './todolist.service';
 import { JwtStrategy } from '../jwt/jwt.strategy';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UserModule } from '../user/user.module';
+import { TodoModule } from '../todo/todo.module';
 
 @Module({
-    imports: [PrismaModule, UserModule],
+    imports: [PrismaModule, UserModule, TodoModule],
     controllers: [TodolistController],
     providers: [TodolistService, JwtStrategy],
 })

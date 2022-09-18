@@ -1,12 +1,21 @@
-import { IsNotEmpty } from 'class-validator';
-import { IsUUID } from '@nestjs/class-validator';
+import { IsUUID, IsNotEmpty } from '@nestjs/class-validator';
 
 export class TodoIdDto {
     @IsUUID()
     id: string;
 }
 
-export class AddTodoDto extends TodoIdDto {
+export class UpdateTodoDto {
     @IsNotEmpty()
     name: string;
+}
+
+export class CreateTodoDto extends UpdateTodoDto {}
+
+export class TodoDto {
+    id: string;
+    name: string;
+    createdAt: Date;
+    isComplete: boolean;
+    todoListId: string;
 }

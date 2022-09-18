@@ -20,7 +20,7 @@ model User {
 
 model TodoList {
   id        String     @id @default(uuid())
-  name      String
+  name      String     @unique
   createdAt DateTime
   todos     Todo[]
   user      User       @relation(references: [id], fields: [userId])

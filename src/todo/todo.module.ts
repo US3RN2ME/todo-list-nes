@@ -9,5 +9,6 @@ import { TodoService } from './todo.serivce';
     imports: [PrismaModule, UserModule],
     controllers: [TodoController],
     providers: [TodoService, JwtStrategy],
+    exports: [TodoService],
 })
 export class TodoModule {}

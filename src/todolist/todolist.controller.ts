@@ -6,30 +6,58 @@ import {
     Body,
     Req,
     Delete,
+    Param,
 } from '@nestjs/common';
 import { TodolistService } from './todolist.service';
 import { JwtAuthGuard } from '../jwt/jwt-auth.guard';
-import { AddListDto, DeleteListDto } from './todolist.dto';
+import {
+    CreateListDto,
+    DeleteListDto,
+    TodoListDto,
+    TodoListIdDto,
+} from './todolist.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CreateTodoDto, TodoDto } from '../todo/todo.dto';
+import { TodoService } from '../todo/todo.serivce';
 
+@ApiBearerAuth()
+@ApiTags('lists')
+@UseGuards(JwtAuthGuard)
 @Controller('lists')
 export class TodolistController {
-    constructor(private readonly todolistService: TodolistService) {}
+    constructor(
+        private readonly todolistService: TodolistService,
+        private readonly todoService: TodoService
+    ) {}
 
-    @UseGuards(JwtAuthGuard)
     @Get()
-    async getLists(@Req() { user }) {
-        return this.todolistService.getByUserId(user);
+    async getLists(@Req() { user }): Promise<TodoListDto[]> {
+        return await this.todolistService.getByUserId(user);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @Get(':id')
+    async getTodos(@Param() { id }: TodoListIdDto): Promise<TodoDto[]> {
+        return await this.todoService.getTodosByListId(id);
+    }
+
+    @Post(':id')
+    async addTodo(
+        @Param() { id }: TodoListIdDto,
+        @Body() { name }: CreateTodoDto
+    ): Promise<TodoDto> {
+        return await this.todoService.addTodo(id, name);
+    }
+
     @Post()
-    async addList(@Body() dto: AddListDto, @Req() { user }) {
-        return await this.todolistService.addTodoList(user, dto.name);
+    async addList(
+        @Body() { name }: CreateListDto,
+        @Req() { user }
+    ): Promise<TodoListDto> {
+        return await this.todolistService.addTodoList(user, name);
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Delete()
-    async deleteList(@Body() dto: DeleteListDto) {
-        return await this.todolistService.deleteTodoList(dto.id);
+    @Delete(':id')
+    async deleteList(@Param() { id }: DeleteListDto): Promise<{ id: string }> {
+        return await this.todolistService.deleteTodoList(id);
     }
 }
